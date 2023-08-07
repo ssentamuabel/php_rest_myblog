@@ -89,7 +89,43 @@ class Post{
 
 
 
-    // 
+    // CREATE POST
+    public function create()
+    {
+        // CREATE QUERY
+        $query = 'INSERT INTO ' . $this->table . '
+            SET 
+                title = :title,
+                body = :body,
+                author = :author,
+                category_id = :category_id';
+
+        // PREPARE STATEMENT
+        $stmt = $this->conn->prepare($query);
+
+        // CLEAN DATA
+        $this->title = htmlSpecialChars(strip_tags($this->title));
+        $this->body = htmlSpecialChars(strip_tags($this->body));
+        $this->author = htmlSpecialChars(strip_tags($this->author));
+        $this->category_id = htmlSpecialChars(strip_tags($this->category_id));
+      
+        // BIND DATA
+        $stmt->bindParam(':title', $this->title);
+        $stmt->bindParam(':body', $this->body);
+        $stmt->bindParam(':author', $this->author);
+        $stmt->bindParam(':category_id', $this->category_id);
+
+        // EXECUTE QUERY
+        if($stmt->execute())
+        {
+            return  true;
+        }
+
+        // PRINT ERROR IF SOMETHING GOES WRONG
+        printf("Error: %s.\n", $stmt->error);
+
+        return false;
+    }
 }
 
 
